@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: ebook-mysql
+    environment:
+      MYSQL_DATABASE: ebook
+      MYSQL_ROOT_PASSWORD: ebook2024
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_USER: ebook_user
+      MYSQL_PASSWORD: ebook2024
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pebook2024"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./BackEndC-capas
+      dockerfile: Dockerfile
+    container_name: ebook-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: ebook2024
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+    ports:
+      - "8081:8081"
+
+  frontend:
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
+    container_name: ebook-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
