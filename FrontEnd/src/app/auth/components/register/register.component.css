@@ -1,0 +1,55 @@
+.register-container {
+  min-height: calc(100vh - 112px);
+  padding: 44px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(135deg, rgba(23, 60, 54, 0.9), rgba(39, 93, 80, 0.62)),
+    url('/assets/img/bannerprincipal.png') center / cover;
+}
+
+.register-card {
+  width: min(560px, 100%);
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: 24px !important;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: var(--shadow-lg) !important;
+  backdrop-filter: blur(18px);
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.login-link {
+  margin: 18px 0 0;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
+.login-link a {
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.error-message,
+.success-message {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.error-message {
+  color: #b42318;
+  background: #fff0ee;
+}
+
+.success-message {
+  color: #087443;
+  background: #ecfdf3;
+}

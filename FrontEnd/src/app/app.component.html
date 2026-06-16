@@ -1,0 +1,79 @@
+<!-- Barra Superior de Contacto -->
+<div class="topline">
+  <a href="https://wa.me/51903581659" target="_blank" rel="noopener noreferrer" class="topline-link">
+    <i class="bi bi-whatsapp"></i>
+    <span>Contáctanos</span>
+  </a>
+</div>
+
+<!-- Barra de Navegación Principal -->
+<mat-toolbar class="app-navbar">
+  <a [routerLink]="(isAdmin$ | async) ? '/admin' : '/'" class="navbar-brand-button">
+    <img src="assets/img/logoebook.png" alt="Logo de la Librería" class="navbar-logo-image">
+  </a>
+
+  <span class="navbar-center-spacer-left"></span>
+  <span class="navbar-center-spacer-right"></span>
+
+  <div class="navbar-right-section">
+    <!-- Botón de Ingresar (para usuarios no logueados) -->
+    <ng-container *ngIf="(isLoggedIn$ | async) === false">
+      <button mat-button routerLink="/login" class="navbar-nav-button icon-button">
+        <i class="bi bi-person navbar-nav-icon"></i>
+        <span class="icon-button-text">Ingresar</span>
+      </button>
+    </ng-container>
+
+    <!-- Menú de Usuario (para usuarios logueados) -->
+    <ng-container *ngIf="(isLoggedIn$ | async) === true">
+      <button mat-button
+              [matMenuTriggerFor]="userOptionsMenu"
+              #userOptionsTrigger="matMenuTrigger"
+              (mouseenter)="userOptionsTrigger.openMenu()"
+              class="navbar-nav-button icon-button">
+        <i class="bi bi-person-fill navbar-nav-icon"></i>
+        <span class="icon-button-text">Hola, {{ (currentUser$ | async)?.nombres }}</span>
+      </button>
+      <mat-menu #userOptionsMenu="matMenu" (mouseleave)="userOptionsTrigger.closeMenu()" class="app-menu-panel">
+        <div (mouseleave)="userOptionsTrigger.closeMenu()">
+          <button mat-menu-item *ngIf="!(isAdmin$ | async)" routerLink="/mis-pedidos" class="app-menu-item">
+            <i class="bi bi-receipt-fill app-menu-item-icon"></i> Mis Pedidos
+          </button>
+          <button mat-menu-item *ngIf="isAdmin$ | async" routerLink="/admin" class="app-menu-item">
+            <i class="bi bi-gear-fill app-menu-item-icon"></i> Admin
+          </button>
+          <button mat-menu-item (click)="logout()" class="app-menu-item">
+            <i class="bi bi-box-arrow-right app-menu-item-icon"></i> Cerrar Sesión
+          </button>
+        </div>
+      </mat-menu>
+    </ng-container>
+
+    <!-- Botón del Carrito -->
+    <button mat-button *ngIf="!(isAdmin$ | async)" routerLink="/carrito"
+            [matBadge]="cartItemCount$ | async"
+            [matBadgeHidden]="(cartItemCount$ | async) === 0"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            class="navbar-nav-button icon-button">
+      <i class="bi bi-cart-fill navbar-nav-icon"></i>
+      <span class="icon-button-text">Carrito</span>
+    </button>
+  </div>
+</mat-toolbar>
+
+<!-- Contenedor para el Contenido de las Páginas -->
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- Pie de Página -->
+<footer class="app-footer">
+  <div class="footer-content">
+    <p>&copy; 2025 EBOOK. Todos los derechos reservados.</p>
+    <div class="footer-social-icons">
+      <a href="https://www.facebook.com/profile.php?id=61583305024474" target="_blank" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+    </div>
+    <app-chatbot></app-chatbot>
+  </div>
+</footer>

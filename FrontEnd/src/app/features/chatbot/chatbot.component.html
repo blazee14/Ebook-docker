@@ -1,0 +1,55 @@
+<button class="chat-bubble" (click)="toggleChat()" [class.open]="isOpen" aria-label="Abrir chat">
+  <i class="bi" [class.bi-chat-dots-fill]="!isOpen" [class.bi-x-lg]="isOpen"></i>
+</button>
+
+<div class="chat-panel" [class.visible]="isOpen" role="dialog" aria-label="Chat asistente EBOOK">
+
+  <div class="chat-header">
+    <div class="header-info">
+      <div class="avatar">📚</div>
+      <div>
+        <p class="header-name">Asistente EBOOK</p>
+        <p class="header-status">● En línea</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="toggleChat()" aria-label="Cerrar">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="messages" id="chat-messages">
+    <div
+      *ngFor="let msg of messages"
+      class="msg"
+      [class.msg-bot]="msg.role === 'model'"
+      [class.msg-user]="msg.role === 'user'">
+      {{ msg.text }}
+    </div>
+    
+    <div class="msg msg-bot typing" *ngIf="isLoading">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="quick-suggestions">
+    <button
+      *ngFor="let s of quickSuggestions"
+      class="suggestion-btn"
+      (click)="sendMessage(s)">
+      {{ s }}
+    </button>
+  </div>
+
+  <div class="input-area">
+    <textarea
+      [(ngModel)]="userInput"
+      placeholder="Escribe tu consulta..."
+      rows="1"
+      (keydown)="handleKey($event)">
+    </textarea>
+    <button class="send-btn" (click)="sendMessage()" [disabled]="isLoading" aria-label="Enviar">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </div>
+
+</div>
