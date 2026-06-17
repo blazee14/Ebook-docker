@@ -633,35 +633,4 @@
       transform: scale(1);
     }
   }
-  /* Contenedor padre que oculta el desbordamiento */
-  .ebook-marquee {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    background-color: #f9f7f2;
-    padding: 10px 0;
-    display: flex;
-  }
-
-  .ebook-marquee-content {
-    display: inline-block;
-    /* El nombre de la animación debe coincidir con el @keyframes */
-    animation: marquee-move 20s linear infinite;
-    padding-left: 100%;
-  }
-
-  .ebook-marquee-content span {
-    margin: 0 15px;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-
-  @keyframes marquee-move {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
 }
