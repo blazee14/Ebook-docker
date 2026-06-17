@@ -1,9 +1,11 @@
+/* ─── Host ─────────────────────────────────────────────── */
 :host {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
 
+/* ─── Topline ───────────────────────────────────────────── */
 .topline {
   height: 36px;
   padding: 0 40px;
@@ -21,14 +23,15 @@
   color: inherit;
   font-size: 0.86rem;
   font-weight: 700;
-  letter-spacing: 0;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .topline-link:hover {
   color: #e8b057;
 }
 
+/* ─── Navbar ────────────────────────────────────────────── */
 .app-navbar {
   position: sticky;
   top: 0;
@@ -42,11 +45,11 @@
   border-bottom: 1px solid rgba(231, 221, 207, 0.86);
   box-shadow: 0 14px 36px rgba(24, 33, 47, 0.08);
   backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px); /* Safari */
 }
 
-.navbar-center-spacer-left,
-.navbar-center-spacer-right {
-  flex-grow: 1;
+.navbar-spacer {
+  flex: 1;
 }
 
 .navbar-brand-button {
@@ -55,6 +58,13 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  /* Foco visible para teclado */
+  border-radius: 8px;
+  outline-offset: 4px;
+}
+
+.navbar-brand-button:focus-visible {
+  outline: 2px solid var(--color-primary);
 }
 
 .navbar-logo-image {
@@ -69,6 +79,7 @@
   gap: 10px;
 }
 
+/* ─── Botones de nav (icono + texto) ────────────────────── */
 .navbar-nav-button.icon-button {
   min-width: 82px;
   height: 54px;
@@ -85,6 +96,17 @@
   background: rgba(39, 93, 80, 0.09);
   border-color: rgba(39, 93, 80, 0.13);
   transform: translateY(-1px);
+}
+
+/* Respeta preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-nav-button.icon-button {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .navbar-nav-button.icon-button:hover {
+    transform: none;
+  }
 }
 
 .navbar-nav-button.icon-button .navbar-nav-icon {
@@ -106,12 +128,40 @@
   white-space: nowrap;
 }
 
+/* ─── Skeleton de auth (evita layout shift) ─────────────── */
+.navbar-auth-skeleton {
+  width: 82px;
+  height: 54px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(39, 93, 80, 0.06) 25%,
+    rgba(39, 93, 80, 0.12) 50%,
+    rgba(39, 93, 80, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-auth-skeleton {
+    animation: none;
+    background: rgba(39, 93, 80, 0.08);
+  }
+}
+
+/* ─── Menú desplegable ──────────────────────────────────── */
 .app-menu-panel {
   min-width: 190px;
   margin-top: 8px;
   overflow: hidden;
   border: 1px solid rgba(231, 221, 207, 0.9);
-  border-radius: 14px;
+  border-radius: 14px !important;
   background: #ffffff;
   box-shadow: var(--shadow-md);
 }
@@ -120,6 +170,7 @@
   color: var(--color-ink);
   font-size: 0.95rem;
   font-weight: 600;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .app-menu-item:hover {
@@ -133,15 +184,15 @@
   font-size: 18px;
 }
 
-.main-content {
+/* ─── Contenido principal ───────────────────────────────── */
+main.main-content {
   flex-grow: 1;
-  padding-top: 0;
 }
 
+/* ─── Footer ────────────────────────────────────────────── */
 .app-footer {
   padding: 34px 20px;
-  background:
-    linear-gradient(135deg, #173c36 0%, #1d2733 100%);
+  background: linear-gradient(135deg, #173c36 0%, #1d2733 100%);
   color: rgba(255, 255, 255, 0.82);
   text-align: center;
   font-size: 0.92rem;
@@ -176,7 +227,7 @@
   color: #fff9ed;
   font-size: 1.2rem;
   text-decoration: none;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .social-icon:hover {
@@ -185,6 +236,22 @@
   transform: translateY(-2px);
 }
 
+.social-icon:focus-visible {
+  outline: 2px solid #e8b057;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-icon {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .social-icon:hover {
+    transform: none;
+  }
+}
+
+/* ─── Responsive ────────────────────────────────────────── */
 @media (max-width: 992px) {
   .topline {
     padding: 0 18px;
