@@ -27,7 +27,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
   MatToolbarModule, MatCardModule, MatButtonModule,
   MatIconModule, MatFormFieldModule, MatInputModule,
   MatProgressSpinnerModule, CurrencyPipe 
-]
+],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
