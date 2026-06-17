@@ -1,6 +1,11 @@
 <!-- Barra Superior de Contacto -->
 <div class="topline" role="complementary" aria-label="Información de contacto">
-  <a href="https://wa.me/51903581659" target="_blank" rel="noopener noreferrer" class="topline-link">
+  <a
+    href="https://wa.me/51903581659"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="topline-link"
+  >
     <i class="bi bi-whatsapp" aria-hidden="true"></i>
     <span>Contáctanos por WhatsApp</span>
   </a>
@@ -9,10 +14,16 @@
 <!-- Barra de Navegación Principal -->
 <nav aria-label="Navegación principal">
   <mat-toolbar class="app-navbar">
-    <a [routerLink]="(isAdmin$ | async) ? '/admin' : '/'"
-       class="navbar-brand-button"
-       aria-label="Ir al inicio - EBOOK Librería">
-      <img src="assets/img/logoebook.png" alt="EBOOK Librería" class="navbar-logo-image">
+    <a
+      [routerLink]="(authState$ | async)?.isAdmin ? '/admin' : '/'"
+      class="navbar-brand-button"
+      aria-label="Ir al inicio - EBOOK Librería"
+    >
+      <img
+        src="assets/img/logoebook.png"
+        alt="EBOOK Librería"
+        class="navbar-logo-image"
+      />
     </a>
 
     <span class="navbar-spacer" aria-hidden="true"></span>
@@ -20,12 +31,14 @@
     <div class="navbar-right-section">
       <!-- Estado de carga (evita flash de contenido) -->
       <ng-container *ngIf="authState$ | async as auth; else loadingAuth">
-
         <!-- Usuario no logueado -->
         <ng-container *ngIf="!auth.isLoggedIn">
-          <button mat-button routerLink="/login"
-                  class="navbar-nav-button icon-button"
-                  aria-label="Iniciar sesión">
+          <button
+            mat-button
+            routerLink="/login"
+            class="navbar-nav-button icon-button"
+            aria-label="Iniciar sesión"
+          >
             <i class="bi bi-person navbar-nav-icon" aria-hidden="true"></i>
             <span class="icon-button-text">Ingresar</span>
           </button>
@@ -33,33 +46,50 @@
 
         <!-- Usuario logueado -->
         <ng-container *ngIf="auth.isLoggedIn">
-          <button mat-button
-                  [matMenuTriggerFor]="userOptionsMenu"
-                  #userOptionsTrigger="matMenuTrigger"
-                  (mouseenter)="openMenuWithDelay(userOptionsTrigger)"
-                  class="navbar-nav-button icon-button"
-                  [attr.aria-label]="'Menú de ' + auth.user?.nombres">
+          <button
+            mat-button
+            [matMenuTriggerFor]="userOptionsMenu"
+            #userOptionsTrigger="matMenuTrigger"
+            (mouseenter)="openMenu(userOptionsTrigger)"
+            class="navbar-nav-button icon-button"
+            [attr.aria-label]="'Menú de ' + auth.user?.nombres"
+          >
             <i class="bi bi-person-fill navbar-nav-icon" aria-hidden="true"></i>
             <span class="icon-button-text">Hola, {{ auth.user?.nombres }}</span>
           </button>
 
           <mat-menu #userOptionsMenu="matMenu" class="app-menu-panel">
             <div (mouseleave)="userOptionsTrigger.closeMenu()">
-              <button mat-menu-item *ngIf="!auth.isAdmin"
-                      routerLink="/mis-pedidos"
-                      class="app-menu-item">
-                <i class="bi bi-receipt-fill app-menu-item-icon" aria-hidden="true"></i>
+              <button
+                mat-menu-item
+                *ngIf="!auth.isAdmin"
+                routerLink="/mis-pedidos"
+                class="app-menu-item"
+              >
+                <i
+                  class="bi bi-receipt-fill app-menu-item-icon"
+                  aria-hidden="true"
+                ></i>
                 Mis Pedidos
               </button>
-              <button mat-menu-item *ngIf="auth.isAdmin"
-                      routerLink="/admin"
-                      class="app-menu-item">
-                <i class="bi bi-gear-fill app-menu-item-icon" aria-hidden="true"></i>
+              <button
+                mat-menu-item
+                *ngIf="auth.isAdmin"
+                routerLink="/admin"
+                class="app-menu-item"
+              >
+                <i
+                  class="bi bi-gear-fill app-menu-item-icon"
+                  aria-hidden="true"
+                ></i>
                 Panel Admin
               </button>
               <mat-divider></mat-divider>
               <button mat-menu-item (click)="logout()" class="app-menu-item">
-                <i class="bi bi-box-arrow-right app-menu-item-icon" aria-hidden="true"></i>
+                <i
+                  class="bi bi-box-arrow-right app-menu-item-icon"
+                  aria-hidden="true"
+                ></i>
                 Cerrar Sesión
               </button>
             </div>
@@ -69,19 +99,25 @@
         <!-- Carrito (solo usuarios no admin) -->
         <ng-container *ngIf="!auth.isAdmin">
           <ng-container *ngIf="cartItemCount$ | async as cartCount">
-            <button mat-button routerLink="/carrito"
-                    class="navbar-nav-button icon-button"
-                    [matBadge]="cartCount"
-                    [matBadgeHidden]="cartCount === 0"
-                    matBadgeColor="warn"
-                    matBadgePosition="above after"
-                    [attr.aria-label]="cartCount > 0 ? 'Carrito, ' + cartCount + ' artículos' : 'Carrito vacío'">
+            <button
+              mat-button
+              routerLink="/carrito"
+              class="navbar-nav-button icon-button"
+              [matBadge]="cartCount"
+              [matBadgeHidden]="cartCount === 0"
+              matBadgeColor="warn"
+              matBadgePosition="above after"
+              [attr.aria-label]="
+                cartCount > 0
+                  ? 'Carrito, ' + cartCount + ' artículos'
+                  : 'Carrito vacío'
+              "
+            >
               <i class="bi bi-cart-fill navbar-nav-icon" aria-hidden="true"></i>
               <span class="icon-button-text">Carrito</span>
             </button>
           </ng-container>
         </ng-container>
-
       </ng-container>
 
       <!-- Placeholder durante carga de auth -->
@@ -102,11 +138,13 @@
   <div class="footer-content">
     <p>&copy; 2026 EBOOK. Todos los derechos reservados.</p>
     <div class="footer-social-icons">
-      <a href="https://www.facebook.com/profile.php?id=61583305024474"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="social-icon"
-         aria-label="Síguenos en Facebook (abre en nueva pestaña)">
+      <a
+        href="https://www.facebook.com/profile.php?id=61583305024474"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="social-icon"
+        aria-label="Síguenos en Facebook (abre en nueva pestaña)"
+      >
         <i class="bi bi-facebook" aria-hidden="true"></i>
       </a>
     </div>

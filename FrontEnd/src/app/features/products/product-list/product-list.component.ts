@@ -23,10 +23,11 @@ import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
   selector: 'app-product-list',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, FormsModule, MatCardModule, MatButtonModule,
-    MatProgressSpinnerModule, MatInputModule, MatFormFieldModule, MatIconModule,
-    CurrencyPipe, MatToolbarModule, UpperCasePipe
-  ],
+  CommonModule, RouterLink, FormsModule,
+  MatToolbarModule, MatCardModule, MatButtonModule,
+  MatIconModule, MatFormFieldModule, MatInputModule,
+  MatProgressSpinnerModule, CurrencyPipe 
+]
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
