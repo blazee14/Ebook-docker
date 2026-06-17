@@ -1,14 +1,11 @@
-<!-- Barra Superior de Contacto -->
 <div class="topline" role="complementary" aria-label="Información de contacto">
   <div class="topline-inner">
-    
-      <a href="https://wa.me/51903581659" 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      class="topline-link">
-      <i class="bi bi-whatsapp" aria-hidden="true"></i>
-      <span>Contáctanos por WhatsApp</span>
-      </a>
+    <a
+      href="https://wa.me/51903581659"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="topline-link"
+    >
       <i class="bi bi-whatsapp" aria-hidden="true"></i>
       <span>Contáctanos por WhatsApp</span>
     </a>
@@ -20,15 +17,13 @@
   </div>
 </div>
 
-<!-- Barra de Navegación Principal -->
 <nav aria-label="Navegación principal">
   <mat-toolbar class="app-navbar">
-    
-      <a [routerLink]="(authState$ | async)?.isAdmin ? '/admin' : '/'"
+    <a
+      [routerLink]="(authState$ | async)?.isAdmin ? '/admin' : '/'"
       class="navbar-brand-button"
-      aria-label="Ir al inicio - EBOOK Librería">
-      <img src="assets/img/logoebook.png" alt="EBOOK Librería" class="navbar-logo-image" />
-      </a>
+      aria-label="Ir al inicio - EBOOK Librería"
+    >
       <img
         src="assets/img/logoebook.png"
         alt="EBOOK Librería"
@@ -39,7 +34,6 @@
     <span class="navbar-spacer" aria-hidden="true"></span>
 
     <div class="navbar-right-section">
-      <!-- Wishlist (visual) -->
       <ng-container *ngIf="authState$ | async as authForWishlist">
         <button
           *ngIf="!authForWishlist.isAdmin"
@@ -52,9 +46,7 @@
         </button>
       </ng-container>
 
-      <!-- Estado de carga (evita flash de contenido) -->
       <ng-container *ngIf="authState$ | async as auth; else loadingAuth">
-        <!-- Usuario no logueado -->
         <ng-container *ngIf="!auth.isLoggedIn">
           <button
             mat-button
@@ -67,7 +59,6 @@
           </button>
         </ng-container>
 
-        <!-- Usuario logueado -->
         <ng-container *ngIf="auth.isLoggedIn">
           <button
             mat-button
@@ -119,7 +110,6 @@
           </mat-menu>
         </ng-container>
 
-        <!-- Carrito (solo usuarios no admin) -->
         <ng-container *ngIf="!auth.isAdmin">
           <ng-container *ngIf="cartItemCount$ | async as cartCount">
             <button
@@ -143,34 +133,35 @@
         </ng-container>
       </ng-container>
 
-      <!-- Placeholder durante carga de auth -->
       <ng-template #loadingAuth>
         <div class="navbar-auth-skeleton" aria-hidden="true"></div>
       </ng-template>
     </div>
   </mat-toolbar>
 </nav>
-<!-- Contenido Principal -->
+
 <main class="main-content">
   <router-outlet></router-outlet>
 </main>
 
-<!-- Pie de Página -->
 <footer class="app-footer">
   <div class="footer-main">
     <div class="footer-grid">
       <div class="footer-col footer-brand-col">
-        <img src="assets/img/logoebook.png" alt="EBOOK Librería" class="footer-logo" />
+        <img
+          src="assets/img/logoebook.png"
+          alt="EBOOK Librería"
+          class="footer-logo"
+        />
         <p class="footer-tagline">Tu librería digital de confianza en Perú.</p>
         <div class="footer-social-icons">
-          
-            <a href="https://www.facebook.com/profile.php?id=61583305024474"
+          <a
+            href="https://www.facebook.com/profile.php?id=61583305024474"
             target="_blank"
             rel="noopener noreferrer"
             class="social-icon"
-            aria-label="Síguenos en Facebook">
-            <i class="bi bi-facebook" aria-hidden="true"></i>
-            </a>
+            aria-label="Síguenos en Facebook"
+          >
             <i class="bi bi-facebook" aria-hidden="true"></i>
           </a>
         </div>
@@ -179,9 +170,15 @@
       <div class="footer-col">
         <h4 class="footer-col-title">Categorías</h4>
         <a routerLink="/" class="footer-link">Todos los libros</a>
-        <a [routerLink]="['/productos/categoria', 2]" class="footer-link">Infantil</a>
-        <a [routerLink]="['/productos/categoria', 5]" class="footer-link">Ficción</a>
-        <a [routerLink]="['/productos/categoria', 1]" class="footer-link">Historia</a>
+        <a [routerLink]="['/productos/categoria', 2]" class="footer-link"
+          >Infantil</a
+        >
+        <a [routerLink]="['/productos/categoria', 5]" class="footer-link"
+          >Ficción</a
+        >
+        <a [routerLink]="['/productos/categoria', 1]" class="footer-link"
+          >Historia</a
+        >
       </div>
 
       <div class="footer-col">
@@ -193,7 +190,12 @@
 
       <div class="footer-col">
         <h4 class="footer-col-title">Contáctanos</h4>
-        <a href="https://wa.me/51903581659" target="_blank" rel="noopener noreferrer" class="footer-link">
+        <a
+          href="https://wa.me/51903581659"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link"
+        >
           <i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp
         </a>
         <span class="footer-link footer-link-static">
