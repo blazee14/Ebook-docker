@@ -114,6 +114,11 @@
         aria-labelledby="top-selling-title"
       >
         <h2 id="top-selling-title" class="section-title">Los Más Vendidos</h2>
+
+        <p class="section-subtitle">
+          Los títulos favoritos de nuestra comunidad. Descubre los ebooks más
+          leídos y recomendados del momento.
+        </p>
         <div class="top-selling-grid" role="list">
           <article
             class="top-selling-card mat-card"
@@ -178,6 +183,14 @@
 
   <!-- Estado: Resultados -->
   <ng-container *ngIf="products$ | async as products">
+
+    <section class="catalog-intro">
+    <h2>Nuestro Catálogo</h2>
+    <p>
+      Explora cientos de ebooks disponibles para descarga inmediata.
+      Encuentra novelas, historia, ficción, educación y mucho más.
+    </p>
+  </section>
     <!-- Con resultados -->
     <section
       *ngIf="products.length > 0; else noResults"
