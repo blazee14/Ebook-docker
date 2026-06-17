@@ -392,13 +392,13 @@
   font-weight: 800;
   line-height: 1.35;
   min-height: 2.7rem;
-  
+
   /* Bloque de truncamiento */
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2; /* Compatibilidad navegadores Webkit */
-  line-clamp: 2;        /* Estándar moderno */
-  
+  line-clamp: 2; /* Estándar moderno */
+
   overflow: hidden;
 }
 
@@ -631,6 +631,47 @@
     .wishlist-button {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+  .ebook-marquee {
+    width: 100%;
+    overflow: hidden;
+
+    background: #23443c;
+
+    border-top: 1px solid #d7c9a6;
+    border-bottom: 1px solid #d7c9a6;
+
+    padding: 18px 0;
+  }
+
+  .ebook-marquee-content {
+    display: flex;
+    width: max-content;
+
+    gap: 50px;
+
+    color: #f7f3e8;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    animation: ebookScroll 40s linear infinite;
+  }
+
+  .ebook-marquee:hover .ebook-marquee-content {
+    animation-play-state: paused;
+  }
+
+  @keyframes ebookScroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
     }
   }
 }
