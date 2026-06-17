@@ -2,15 +2,20 @@
 <nav aria-label="Categorías de libros">
   <mat-toolbar class="category-toolbar">
     <div class="category-list-container" role="list">
+      <a routerLink="/" class="category-link" role="listitem"
+        >Todos los libros</a
+      >
 
-      <a routerLink="/" class="category-link" role="listitem">Todos los libros</a>
-
-      <ng-container *ngIf="categories$ | async as categories; else categoriesLoading">
+      <ng-container
+        *ngIf="categories$ | async as categories; else categoriesLoading"
+      >
         <ng-container *ngFor="let category of categories; let last = last">
           <span class="category-separator" aria-hidden="true">|</span>
-          <a [routerLink]="['/productos/categoria', category.id]"
-             class="category-link"
-             role="listitem">
+          <a
+            [routerLink]="['/productos/categoria', category.id]"
+            class="category-link"
+            role="listitem"
+          >
             {{ category.nombre }}
           </a>
         </ng-container>
@@ -22,7 +27,6 @@
         <span class="category-separator" aria-hidden="true">|</span>
         <span class="category-link category-skeleton" aria-hidden="true"></span>
       </ng-template>
-
     </div>
   </mat-toolbar>
 </nav>
@@ -32,15 +36,20 @@
   <div class="search-bar">
     <mat-form-field appearance="outline" class="full-width-search">
       <mat-label>Buscar por título o autor</mat-label>
-      <input matInput
-             [(ngModel)]="searchTerm"
-             (ngModelChange)="onSearchTermChange()"
-             (keyup.enter)="executeSearch()"
-             placeholder="Ej: Harry Potter, Tolkien"
-             aria-label="Campo de búsqueda" />
-      <button mat-icon-button matSuffix
-              (click)="executeSearch()"
-              aria-label="Ejecutar búsqueda">
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchTermChange()"
+        (keyup.enter)="executeSearch()"
+        placeholder="Ej: Harry Potter, Tolkien"
+        aria-label="Campo de búsqueda"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="executeSearch()"
+        aria-label="Ejecutar búsqueda"
+      >
         <mat-icon>search</mat-icon>
       </button>
     </mat-form-field>
@@ -49,66 +58,106 @@
 
 <!-- ─── Contenido de Portada (solo sin búsqueda activa) ─────── -->
 <ng-container *ngIf="!searchTerm.trim()">
-
   <!-- Banner Principal -->
   <div class="hero-banner" aria-hidden="true">
-    <img src="assets/img/bannerprincipal.png"
-         alt="Banner principal de la librería EBOOK"
-         class="hero-banner-image"
-         loading="eager">
+    <img
+      src="assets/img/bannerprincipal.png"
+      alt="Banner principal de la librería EBOOK"
+      class="hero-banner-image"
+      loading="eager"
+    />
   </div>
 
   <div class="page-content-wrapper">
-
     <!-- Promociones -->
     <section class="promo-section" aria-label="Promociones destacadas">
-      <a [routerLink]="['/productos/categoria', 2]" class="promo-item" aria-label="Ver categoría Infantil">
-        <img src="assets/img/carrusel1.png" alt="Libros infantiles" loading="lazy">
+      <a
+        [routerLink]="['/productos/categoria', 2]"
+        class="promo-item"
+        aria-label="Ver categoría Infantil"
+      >
+        <img
+          src="assets/img/carrusel1.png"
+          alt="Libros infantiles"
+          loading="lazy"
+        />
       </a>
-      <a [routerLink]="['/productos/categoria', 5]" class="promo-item" aria-label="Ver categoría Ficción">
-        <img src="assets/img/carrusel2.png" alt="Libros de ficción" loading="lazy">
+      <a
+        [routerLink]="['/productos/categoria', 5]"
+        class="promo-item"
+        aria-label="Ver categoría Ficción"
+      >
+        <img
+          src="assets/img/carrusel2.png"
+          alt="Libros de ficción"
+          loading="lazy"
+        />
       </a>
-      <a [routerLink]="['/productos/categoria', 1]" class="promo-item" aria-label="Ver categoría Historia">
-        <img src="assets/img/carrusel3.png" alt="Libros de historia" loading="lazy">
+      <a
+        [routerLink]="['/productos/categoria', 1]"
+        class="promo-item"
+        aria-label="Ver categoría Historia"
+      >
+        <img
+          src="assets/img/carrusel3.png"
+          alt="Libros de historia"
+          loading="lazy"
+        />
       </a>
     </section>
 
     <!-- Más Vendidos -->
     <ng-container *ngIf="topSellingProducts$ | async as topProducts">
-      <section *ngIf="topProducts.length > 0" class="top-selling-section" aria-labelledby="top-selling-title">
+      <section
+        *ngIf="topProducts.length > 0"
+        class="top-selling-section"
+        aria-labelledby="top-selling-title"
+      >
         <h2 id="top-selling-title" class="section-title">Los Más Vendidos</h2>
         <div class="top-selling-grid" role="list">
-          <article class="top-selling-card mat-card"
-                   *ngFor="let product of topProducts"
-                   role="listitem">
-            <button class="top-selling-image-btn"
-                    (click)="viewProductDetail(product.id)"
-                    [attr.aria-label]="'Ver detalle de ' + product.titulo">
-              <img [src]="product.imagenUrl || 'https://placehold.co/400x600/E0E0E0/212121?text=Sin+Portada'"
-                   [alt]="'Portada de ' + product.titulo"
-                   class="top-selling-image"
-                   loading="lazy">
+          <article
+            class="top-selling-card mat-card"
+            *ngFor="let product of topProducts"
+            role="listitem"
+          >
+            <button
+              class="top-selling-image-btn"
+              (click)="viewProductDetail(product.id)"
+              [attr.aria-label]="'Ver detalle de ' + product.titulo"
+            >
+              <img
+                [src]="
+                  product.imagenUrl ||
+                  'https://placehold.co/400x600/E0E0E0/212121?text=Sin+Portada'
+                "
+                [alt]="'Portada de ' + product.titulo"
+                class="top-selling-image"
+                loading="lazy"
+              />
             </button>
             <div class="top-selling-content">
               <h3 class="top-selling-title">
-                <button class="link-button" (click)="viewProductDetail(product.id)">
+                <button
+                  class="link-button"
+                  (click)="viewProductDetail(product.id)"
+                >
                   {{ product.titulo }}
                 </button>
               </h3>
               <p class="top-selling-author">{{ product.autor }}</p>
-              <p class="top-selling-price">{{ product.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
+              <p class="top-selling-price">
+                {{ product.precio | currency: "S/." : "symbol" : "1.2-2" }}
+              </p>
             </div>
           </article>
         </div>
       </section>
     </ng-container>
-
   </div>
 </ng-container>
 
 <!-- ─── Grilla de Productos ──────────────────────────────────── -->
 <div class="page-content-wrapper">
-
   <!-- Estado: Cargando -->
   <ng-container *ngIf="(products$ | async) === null && !errorMessage">
     <div class="loading-spinner" role="status" aria-live="polite">
@@ -129,39 +178,77 @@
 
   <!-- Estado: Resultados -->
   <ng-container *ngIf="products$ | async as products">
-
     <!-- Con resultados -->
-    <section *ngIf="products.length > 0; else noResults"
-             aria-label="Catálogo de libros">
+    <section
+      *ngIf="products.length > 0; else noResults"
+      aria-label="Catálogo de libros"
+    >
       <div class="product-grid" role="list">
-        <article *ngFor="let product of products"
-                 class="product-card-wrapper"
-                 role="listitem">
+        <article
+          *ngFor="let product of products"
+          class="product-card-wrapper"
+          role="listitem"
+        >
           <mat-card class="product-card">
-            <a [routerLink]="['/productos', product.id]"
-               class="product-card-link"
-               [attr.aria-label]="product.titulo + ' por ' + product.autor + ' — ' + (product.precio | currency:'S/.':'symbol':'1.2-2')">
-              <img mat-card-image
-                   [src]="product.imagenUrl || 'https://placehold.co/400x600/E0E0E0/212121?text=Sin+Portada'"
-                   [alt]="'Portada de ' + product.titulo"
-                   class="product-image"
-                   loading="lazy">
+            <a
+              [routerLink]="['/productos', product.id]"
+              class="product-card-link"
+              [attr.aria-label]="
+                product.titulo +
+                ' por ' +
+                product.autor +
+                ' — ' +
+                (product.precio | currency: 'S/.' : 'symbol' : '1.2-2')
+              "
+            >
+              <span
+                *ngIf="getBadge(product.id).type !== 'none'"
+                class="product-badge"
+                [ngClass]="'badge-' + getBadge(product.id).type"
+              >
+                {{ getBadge(product.id).label }}
+              </span>
+              <img
+                mat-card-image
+                [src]="
+                  product.imagenUrl ||
+                  'https://placehold.co/400x600/E0E0E0/212121?text=Sin+Portada'
+                "
+                [alt]="'Portada de ' + product.titulo"
+                class="product-image"
+                loading="lazy"
+              />
+              <button
+                class="wishlist-button"
+                (click)="$event.preventDefault(); $event.stopPropagation()"
+                aria-label="Agregar a favoritos"
+              >
+                <mat-icon>favorite_border</mat-icon>
+              </button>
               <mat-card-content class="product-content">
                 <h3 class="product-title">{{ product.titulo }}</h3>
                 <p class="product-author">{{ product.autor }}</p>
-                <p class="product-price">{{ product.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
+                <p class="product-price">
+                  {{ product.precio | currency: "S/." : "symbol" : "1.2-2" }}
+                </p>
               </mat-card-content>
             </a>
             <div class="slide-up-actions">
-              <button mat-button
-                      class="add-to-cart-button"
-                      [disabled]="product.stock === 0"
-                      (click)="addToCart(product)"
-                      [attr.aria-label]="product.stock === 0
-                        ? product.titulo + ' agotado'
-                        : 'Añadir ' + product.titulo + ' al carrito'">
+              <button
+                mat-button
+                class="add-to-cart-button"
+                [disabled]="product.stock === 0"
+                (click)="addToCart(product)"
+                [attr.aria-label]="
+                  product.stock === 0
+                    ? product.titulo + ' agotado'
+                    : 'Añadir ' + product.titulo + ' al carrito'
+                "
+              >
                 <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
-                <span>{{ product.stock === 0 ? 'Agotado' : 'Añadir al carrito' }}</span>
+                <span>{{
+                  product.stock === 0 ? "Agotado" : "Añadir al carrito"
+                }}</span>
               </button>
             </div>
           </mat-card>
@@ -174,11 +261,13 @@
       <div *ngIf="!errorMessage" class="no-results" role="status">
         <mat-icon aria-hidden="true">search_off</mat-icon>
         <p>No encontramos libros que coincidan con tu búsqueda.</p>
-        <button mat-stroked-button (click)="searchTerm = ''; onSearchTermChange()">
+        <button
+          mat-stroked-button
+          (click)="searchTerm = ''; onSearchTermChange()"
+        >
           Limpiar búsqueda
         </button>
       </div>
     </ng-template>
-
   </ng-container>
 </div>

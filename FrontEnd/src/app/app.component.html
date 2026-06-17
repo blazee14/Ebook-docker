@@ -1,20 +1,27 @@
 <!-- Barra Superior de Contacto -->
 <div class="topline" role="complementary" aria-label="Información de contacto">
-  <a
-    href="https://wa.me/51903581659"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="topline-link"
-  >
-    <i class="bi bi-whatsapp" aria-hidden="true"></i>
-    <span>Contáctanos por WhatsApp</span>
-  </a>
+  <div class="topline-inner">
+    
+      href="https://wa.me/51903581659"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="topline-link"
+    >
+      <i class="bi bi-whatsapp" aria-hidden="true"></i>
+      <span>Contáctanos por WhatsApp</span>
+    </a>
+    <span class="topline-divider" aria-hidden="true"></span>
+    <span class="topline-text">
+      <i class="bi bi-truck" aria-hidden="true"></i>
+      Envíos a todo el Perú
+    </span>
+  </div>
 </div>
 
 <!-- Barra de Navegación Principal -->
 <nav aria-label="Navegación principal">
   <mat-toolbar class="app-navbar">
-    <a
+    
       [routerLink]="(authState$ | async)?.isAdmin ? '/admin' : '/'"
       class="navbar-brand-button"
       aria-label="Ir al inicio - EBOOK Librería"
@@ -29,6 +36,19 @@
     <span class="navbar-spacer" aria-hidden="true"></span>
 
     <div class="navbar-right-section">
+      <!-- Wishlist (visual) -->
+      <ng-container *ngIf="authState$ | async as authForWishlist">
+        <button
+          *ngIf="!authForWishlist.isAdmin"
+          mat-button
+          class="navbar-nav-button icon-button"
+          aria-label="Mis favoritos"
+        >
+          <i class="bi bi-heart navbar-nav-icon" aria-hidden="true"></i>
+          <span class="icon-button-text">Favoritos</span>
+        </button>
+      </ng-container>
+
       <!-- Estado de carga (evita flash de contenido) -->
       <ng-container *ngIf="authState$ | async as auth; else loadingAuth">
         <!-- Usuario no logueado -->
@@ -127,7 +147,6 @@
     </div>
   </mat-toolbar>
 </nav>
-
 <!-- Contenido Principal -->
 <main class="main-content">
   <router-outlet></router-outlet>
@@ -135,19 +154,54 @@
 
 <!-- Pie de Página -->
 <footer class="app-footer">
-  <div class="footer-content">
-    <p>&copy; 2026 EBOOK. Todos los derechos reservados.</p>
-    <div class="footer-social-icons">
-      <a
-        href="https://www.facebook.com/profile.php?id=61583305024474"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-icon"
-        aria-label="Síguenos en Facebook (abre en nueva pestaña)"
-      >
-        <i class="bi bi-facebook" aria-hidden="true"></i>
-      </a>
+  <div class="footer-main">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand-col">
+        <img src="assets/img/logoebook.png" alt="EBOOK Librería" class="footer-logo" />
+        <p class="footer-tagline">Tu librería digital de confianza en Perú.</p>
+        <div class="footer-social-icons">
+          
+            href="https://www.facebook.com/profile.php?id=61583305024474"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-icon"
+            aria-label="Síguenos en Facebook (abre en nueva pestaña)"
+          >
+            <i class="bi bi-facebook" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Categorías</h4>
+        <a routerLink="/" class="footer-link">Todos los libros</a>
+        <a [routerLink]="['/productos/categoria', 2]" class="footer-link">Infantil</a>
+        <a [routerLink]="['/productos/categoria', 5]" class="footer-link">Ficción</a>
+        <a [routerLink]="['/productos/categoria', 1]" class="footer-link">Historia</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Mi cuenta</h4>
+        <a routerLink="/login" class="footer-link">Iniciar sesión</a>
+        <a routerLink="/mis-pedidos" class="footer-link">Mis pedidos</a>
+        <a routerLink="/carrito" class="footer-link">Carrito</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Contáctanos</h4>
+        <a href="https://wa.me/51903581659" target="_blank" rel="noopener noreferrer" class="footer-link">
+          <i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp
+        </a>
+        <span class="footer-link footer-link-static">
+          <i class="bi bi-envelope" aria-hidden="true"></i> contacto@ebook.pe
+        </span>
+      </div>
     </div>
   </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 EBOOK. Todos los derechos reservados.</p>
+  </div>
+
   <app-chatbot></app-chatbot>
 </footer>

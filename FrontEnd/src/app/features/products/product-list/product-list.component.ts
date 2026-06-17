@@ -40,6 +40,13 @@ export class ProductListComponent implements OnInit {
 
   topSellingProducts$: Observable<ProductoMasVendidoDTO[]> | null = null;
 
+  getBadge(productId: number): { label: string; type: 'top' | 'nuevo' | 'none' } {
+  const mod = productId % 3;
+  if (mod === 0) return { label: 'Top', type: 'top' };
+  if (mod === 1) return { label: 'Nuevo', type: 'nuevo' };
+  return { label: '', type: 'none' };
+}
+
   constructor(
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
