@@ -2,7 +2,7 @@
 FROM node:24 AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN chmod +x node_modules/.bin/ng
 COPY . .
 RUN node node_modules/@angular/cli/bin/ng.js build --configuration production
