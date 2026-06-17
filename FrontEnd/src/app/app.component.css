@@ -56,16 +56,22 @@
   position: sticky;
   top: 0;
   z-index: 1001;
-  height: 76px;
+
+  height: 92px;
   padding: 0 40px;
+
   display: flex;
   align-items: center;
+
   color: var(--color-ink);
-  background: rgba(255, 250, 241, 0.86) !important;
+  background: rgba(255, 250, 241, 0.92) !important;
+
   border-bottom: 1px solid rgba(231, 221, 207, 0.86);
-  box-shadow: 0 14px 36px rgba(24, 33, 47, 0.08);
+
+  box-shadow: 0 10px 30px rgba(24, 33, 47, 0.08);
+
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px); /* Safari */
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .navbar-spacer {
@@ -73,12 +79,14 @@
 }
 
 .navbar-brand-button {
-  height: 100%;
-  padding: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
+
+  height: 100%;
+  padding: 0;
+
   text-decoration: none;
-  /* Foco visible para teclado */
   border-radius: 8px;
   outline-offset: 4px;
 }
@@ -88,15 +96,25 @@
 }
 
 .navbar-logo-image {
+  height: 82px;
   width: auto;
-  height: 118px;
-  filter: drop-shadow(0 12px 18px rgba(24, 33, 47, 0.15));
+  object-fit: contain;
+
+  transition: transform 0.25s ease;
+
+  filter: drop-shadow(
+    0 6px 12px rgba(24, 33, 47, 0.12)
+  );
+}
+
+.navbar-brand-button:hover .navbar-logo-image {
+  transform: scale(1.03);
 }
 
 .navbar-right-section {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
 /* ─── Botones de nav (icono + texto) ────────────────────── */
@@ -291,10 +309,10 @@ main.main-content {
 }
 
 .footer-logo {
-  height: 32px;
+  height: 68px;
   width: auto;
-  margin-bottom: 8px;
-  filter: brightness(0) invert(1);
+  margin-bottom: 12px;
+  object-fit: contain;
 }
 
 .footer-tagline {
@@ -374,12 +392,12 @@ main.main-content {
   }
 
   .app-navbar {
-    height: 68px;
+    height: 82px;
     padding: 0 18px;
   }
 
   .navbar-logo-image {
-    height: 82px;
+    height: 70px;
   }
 
   .navbar-nav-button.icon-button {
@@ -409,7 +427,7 @@ main.main-content {
   }
 
   .navbar-logo-image {
-    height: 70px;
+    height: 58px;
   }
 
   .navbar-right-section {
