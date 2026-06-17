@@ -2,11 +2,13 @@
 <div class="topline" role="complementary" aria-label="Información de contacto">
   <div class="topline-inner">
     
-      href="https://wa.me/51903581659"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="topline-link"
-    >
+      <a href="https://wa.me/51903581659" 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      class="topline-link">
+      <i class="bi bi-whatsapp" aria-hidden="true"></i>
+      <span>Contáctanos por WhatsApp</span>
+      </a>
       <i class="bi bi-whatsapp" aria-hidden="true"></i>
       <span>Contáctanos por WhatsApp</span>
     </a>
@@ -22,10 +24,11 @@
 <nav aria-label="Navegación principal">
   <mat-toolbar class="app-navbar">
     
-      [routerLink]="(authState$ | async)?.isAdmin ? '/admin' : '/'"
+      <a [routerLink]="(authState$ | async)?.isAdmin ? '/admin' : '/'"
       class="navbar-brand-button"
-      aria-label="Ir al inicio - EBOOK Librería"
-    >
+      aria-label="Ir al inicio - EBOOK Librería">
+      <img src="assets/img/logoebook.png" alt="EBOOK Librería" class="navbar-logo-image" />
+      </a>
       <img
         src="assets/img/logoebook.png"
         alt="EBOOK Librería"
@@ -161,12 +164,13 @@
         <p class="footer-tagline">Tu librería digital de confianza en Perú.</p>
         <div class="footer-social-icons">
           
-            href="https://www.facebook.com/profile.php?id=61583305024474"
+            <a href="https://www.facebook.com/profile.php?id=61583305024474"
             target="_blank"
             rel="noopener noreferrer"
             class="social-icon"
-            aria-label="Síguenos en Facebook (abre en nueva pestaña)"
-          >
+            aria-label="Síguenos en Facebook">
+            <i class="bi bi-facebook" aria-hidden="true"></i>
+            </a>
             <i class="bi bi-facebook" aria-hidden="true"></i>
           </a>
         </div>
