@@ -7,22 +7,26 @@ import com.api.capas.domain.dto.ItemValidadoDTO;
 import com.api.capas.infrastructure.persistence.entities.Producto;
 import com.api.capas.infrastructure.persistence.repositories.ProductoRepository;
 import com.api.capas.application.service.CarritoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class CarritoServiceImpl implements CarritoService {
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    private final ProductoRepository productoRepository;
+
+    public CarritoServiceImpl(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
+    }
 
     @Override
     public CarritoValidacionResponseDTO validarCarrito(CarritoValidacionRequestDTO request) {
+        Objects.requireNonNull(request, "request must not be null");
         List<ItemValidadoDTO> itemsValidados = new ArrayList<>();
         BigDecimal totalCalculado = BigDecimal.ZERO;
         boolean carritoCompletoValido = true;
@@ -33,7 +37,8 @@ public class CarritoServiceImpl implements CarritoService {
             itemValidado.setCantidadSolicitada(itemDto.getCantidad());
             itemValidado.setValido(true);
 
-            Optional<Producto> productoOptional = productoRepository.findById(itemDto.getProductId());
+            Integer productId = Objects.requireNonNull(itemDto.getProductId(), "productId must not be null");
+            Optional<Producto> productoOptional = productoRepository.findById(productId);
 
             if (productoOptional.isPresent()) {
                 Producto producto = productoOptional.get();

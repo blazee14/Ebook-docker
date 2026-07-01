@@ -12,58 +12,63 @@ import com.api.capas.infrastructure.persistence.entities.*;
 import com.api.capas.infrastructure.persistence.repositories.*;
 import com.api.capas.application.service.PedidoService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class PedidoServiceImpl implements PedidoService {
 
-    @Autowired
-    private PedidoRepository pedidoRepository;
+    private final PedidoRepository pedidoRepository;
+    private final DetallePedidoRepository detallePedidoRepository;
+    private final ProductoRepository productoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final MetodoPagoRepository metodoPagoRepository;
+    private final HistorialPedidoRepository historialPedidoRepository;
 
-    @Autowired
-    private DetallePedidoRepository detallePedidoRepository;
-
-    @Autowired
-    private ProductoRepository productoRepository;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private MetodoPagoRepository metodoPagoRepository;
-
-    @Autowired
-    private HistorialPedidoRepository historialPedidoRepository;
+    public PedidoServiceImpl(PedidoRepository pedidoRepository,
+                             DetallePedidoRepository detallePedidoRepository,
+                             ProductoRepository productoRepository,
+                             UsuarioRepository usuarioRepository,
+                             MetodoPagoRepository metodoPagoRepository,
+                             HistorialPedidoRepository historialPedidoRepository) {
+        this.pedidoRepository = pedidoRepository;
+        this.detallePedidoRepository = detallePedidoRepository;
+        this.productoRepository = productoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.metodoPagoRepository = metodoPagoRepository;
+        this.historialPedidoRepository = historialPedidoRepository;
+    }
 
     @Value("${stripe.secret-key}")
     private String stripeSecretKey;
 
-    private PedidoResponseDTO convertToDto(Pedido pedido) {
-        PedidoResponseDTO dto = new PedidoResponseDTO();
-        dto.setId(pedido.getId());
-        dto.setIdUsuario(pedido.getUsuario().getId());
-        dto.setNombreUsuario(pedido.getUsuario().getNombres() + " " + pedido.getUsuario().getApellidos());
-        dto.setMetodoPagoNombre(pedido.getMetodoPago().getNombre());
-        dto.setEstado(pedido.getEstado());
-        dto.setTotal(pedido.getTotal());
-        dto.setFecha(pedido.getFecha());
-        dto.setCreatedAt(pedido.getCreatedAt());
-        dto.setUpdatedAt(pedido.getUpdatedAt());
-        dto.setClientSecret(pedido.getStripeClientSecret());
-        dto.setPaymentIntentId(pedido.getStripePaymentIntentId());
-        dto.setPaymentStatus(pedido.getStripePaymentStatus());
+    private @NonNull Integer requireId(@NonNull Integer value, @NonNull String fieldName) {
+        return Objects.requireNonNull(value, fieldName + " must not be null");
+    }
 
-        dto.setDetalles(pedido.getDetalles().stream().map(detalle -> {
+    private PedidoResponseDTO convertToDto(Pedido pedido) {
+        Pedido safePedido = Objects.requireNonNull(pedido, "pedido must not be null");
+        PedidoResponseDTO dto = new PedidoResponseDTO();
+        dto.setId(safePedido.getId());
+        dto.setIdUsuario(safePedido.getUsuario().getId());
+        dto.setNombreUsuario(safePedido.getUsuario().getNombres() + " " + safePedido.getUsuario().getApellidos());
+        dto.setMetodoPagoNombre(safePedido.getMetodoPago().getNombre());
+        dto.setEstado(safePedido.getEstado());
+        dto.setTotal(safePedido.getTotal());
+        dto.setFecha(safePedido.getFecha());
+        dto.setCreatedAt(safePedido.getCreatedAt());
+        dto.setUpdatedAt(safePedido.getUpdatedAt());
+        dto.setClientSecret(safePedido.getStripeClientSecret());
+        dto.setPaymentIntentId(safePedido.getStripePaymentIntentId());
+        dto.setPaymentStatus(safePedido.getStripePaymentStatus());
+
+        dto.setDetalles(safePedido.getDetalles().stream().map(detalle -> {
             PedidoResponseDTO.DetallePedidoResponseDTO detalleDto = new PedidoResponseDTO.DetallePedidoResponseDTO();
             detalleDto.setId(detalle.getId());
             detalleDto.setIdProducto(detalle.getProducto().getId());
@@ -82,12 +87,14 @@ public class PedidoServiceImpl implements PedidoService {
     @Transactional
     public PedidoResponseDTO confirmarCompra(ConfirmarCompraRequestDTO request, Integer userId) {
         Stripe.apiKey = stripeSecretKey;
+        Integer resolvedUserId = requireId(Objects.requireNonNull(userId, "userId"), "userId");
+        Integer resolvedMetodoPagoId = requireId(Objects.requireNonNull(request.getIdMetodoPago(), "idMetodoPago"), "idMetodoPago");
 
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + userId));
+        Usuario usuario = usuarioRepository.findById(resolvedUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + resolvedUserId));
 
-        MetodoPago metodoPago = metodoPagoRepository.findById(request.getIdMetodoPago())
-                .orElseThrow(() -> new ResourceNotFoundException("Método de pago no encontrado con ID: " + request.getIdMetodoPago()));
+        MetodoPago metodoPago = metodoPagoRepository.findById(resolvedMetodoPagoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Método de pago no encontrado con ID: " + resolvedMetodoPagoId));
 
         if (!metodoPago.getActivo()) {
             throw new IllegalArgumentException("El método de pago seleccionado no está activo.");
@@ -95,8 +102,9 @@ public class PedidoServiceImpl implements PedidoService {
 
         BigDecimal totalCalculado = BigDecimal.ZERO;
         for (ItemCarritoDTO itemDto : request.getItems()) {
-            Producto producto = productoRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + itemDto.getProductId()));
+            Integer productId = requireId(Objects.requireNonNull(itemDto.getProductId(), "productId"), "productId");
+            Producto producto = productoRepository.findById(productId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + productId));
             if (producto.getStock() < itemDto.getCantidad()) {
                 throw new IllegalArgumentException("Stock insuficiente para el producto: " + producto.getTitulo() + ". Disponible: " + producto.getStock());
             }
@@ -159,7 +167,8 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
 
         for (ItemCarritoDTO itemDto : request.getItems()) {
-            Producto producto = productoRepository.findById(itemDto.getProductId()).get();
+            Integer productId = Objects.requireNonNull(itemDto.getProductId(), "productId");
+            Producto producto = productoRepository.findById(productId).get();
 
             DetallePedido detalle = new DetallePedido();
             detalle.setProducto(producto);
@@ -193,15 +202,17 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public PedidoResponseDTO getPedidoById(Integer pedidoId) {
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + pedidoId));
+        Integer resolvedPedidoId = requireId(Objects.requireNonNull(pedidoId, "pedidoId"), "pedidoId");
+        Pedido pedido = pedidoRepository.findById(resolvedPedidoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + resolvedPedidoId));
         return convertToDto(pedido);
     }
 
     @Override
     public List<PedidoResponseDTO> getPedidosByUserId(Integer userId) {
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + userId));
+        Integer resolvedUserId = requireId(Objects.requireNonNull(userId, "userId"), "userId");
+        Usuario usuario = usuarioRepository.findById(resolvedUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + resolvedUserId));
         return pedidoRepository.findByUsuario(usuario).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -210,11 +221,13 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     @Transactional
     public PedidoResponseDTO actualizarEstadoPedido(Integer pedidoId, String nuevoEstadoString, Integer adminUserId) {
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + pedidoId));
+        Integer resolvedPedidoId = requireId(Objects.requireNonNull(pedidoId, "pedidoId"), "pedidoId");
+        Integer resolvedAdminUserId = requireId(Objects.requireNonNull(adminUserId, "adminUserId"), "adminUserId");
+        Pedido pedido = pedidoRepository.findById(resolvedPedidoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + resolvedPedidoId));
 
-        Usuario adminUsuario = usuarioRepository.findById(adminUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario administrador no encontrado con ID: " + adminUserId));
+        Usuario adminUsuario = usuarioRepository.findById(resolvedAdminUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario administrador no encontrado con ID: " + resolvedAdminUserId));
 
         Pedido.EstadoPedido nuevoEstado;
         try {
@@ -239,10 +252,12 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     @Transactional
     public PedidoResponseDTO cancelarPedidoCliente(Integer pedidoId, Integer userId) {
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + pedidoId));
+        Integer resolvedPedidoId = requireId(Objects.requireNonNull(pedidoId, "pedidoId"), "pedidoId");
+        Integer resolvedUserId = requireId(Objects.requireNonNull(userId, "userId"), "userId");
+        Pedido pedido = pedidoRepository.findById(resolvedPedidoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + resolvedPedidoId));
 
-        if (!pedido.getUsuario().getId().equals(userId)) {
+        if (!pedido.getUsuario().getId().equals(resolvedUserId)) {
             throw new IllegalArgumentException("No tienes permiso para cancelar este pedido.");
         }
 

@@ -5,17 +5,20 @@ import com.api.capas.config.ResourceNotFoundException;
 import com.api.capas.infrastructure.persistence.entities.MetodoPago;
 import com.api.capas.infrastructure.persistence.repositories.MetodoPagoRepository;
 import com.api.capas.application.service.MetodoPagoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class MetodoPagoServiceImpl implements MetodoPagoService {
 
-	@Autowired
-	private MetodoPagoRepository metodoPagoRepository;
+	private final MetodoPagoRepository metodoPagoRepository;
+
+	public MetodoPagoServiceImpl(MetodoPagoRepository metodoPagoRepository) {
+		this.metodoPagoRepository = metodoPagoRepository;
+	}
 
 	@Override
 	public List<MetodoPago> getAllMetodosPago() {
@@ -24,8 +27,9 @@ public class MetodoPagoServiceImpl implements MetodoPagoService {
 
 	@Override
 	public MetodoPago getMetodoPagoById(Integer id) {
-		return metodoPagoRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Método de pago no encontrado con ID: " + id));
+		Integer metodoPagoId = Objects.requireNonNull(id, "id must not be null");
+		return metodoPagoRepository.findById(metodoPagoId)
+				.orElseThrow(() -> new ResourceNotFoundException("Método de pago no encontrado con ID: " + metodoPagoId));
 	}
 
 	@Override
@@ -37,15 +41,16 @@ public class MetodoPagoServiceImpl implements MetodoPagoService {
 		}
 
 		if (metodoPagoDTO.getId() != null) {
-			metodoPago = metodoPagoRepository.findById(metodoPagoDTO.getId())
+			Integer metodoPagoId = Objects.requireNonNull(metodoPagoDTO.getId(), "id must not be null");
+			metodoPago = metodoPagoRepository.findById(metodoPagoId)
 					.orElseThrow(() -> new ResourceNotFoundException(
-							"Método de pago no encontrado con ID: " + metodoPagoDTO.getId()));
+							"Método de pago no encontrado con ID: " + metodoPagoId));
 
 			if (!metodoPago.getNombre().equalsIgnoreCase(metodoPagoDTO.getNombre())) {
 				Optional<MetodoPago> metodoConMismoNombre = metodoPagoRepository
 						.findByNombreIgnoreCase(metodoPagoDTO.getNombre());
 				if (metodoConMismoNombre.isPresent()
-						&& !metodoConMismoNombre.get().getId().equals(metodoPagoDTO.getId())) {
+						&& !metodoConMismoNombre.get().getId().equals(metodoPagoId)) {
 					throw new IllegalArgumentException(
 							"Ya existe otro método de pago con el nombre: " + metodoPagoDTO.getNombre());
 				}
@@ -69,9 +74,10 @@ public class MetodoPagoServiceImpl implements MetodoPagoService {
 
 	@Override
 	public void deleteMetodoPago(Integer id) {
-		if (!metodoPagoRepository.existsById(id)) {
-			throw new ResourceNotFoundException("Método de pago no encontrado con ID: " + id);
+		Integer metodoPagoId = Objects.requireNonNull(id, "id must not be null");
+		if (!metodoPagoRepository.existsById(metodoPagoId)) {
+			throw new ResourceNotFoundException("Método de pago no encontrado con ID: " + metodoPagoId);
 		}
-		metodoPagoRepository.deleteById(id);
+		metodoPagoRepository.deleteById(metodoPagoId);
 	}
 }

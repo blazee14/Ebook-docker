@@ -4,18 +4,19 @@ import com.api.capas.domain.dto.RegistroDTO;
 import com.api.capas.infrastructure.persistence.entities.Usuario;
 import com.api.capas.infrastructure.persistence.repositories.UsuarioRepository;
 import com.api.capas.application.service.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public Usuario registrar(RegistroDTO dto) {

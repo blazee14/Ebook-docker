@@ -5,7 +5,6 @@ import com.api.capas.domain.dto.PedidoResponseDTO;
 import com.api.capas.infrastructure.persistence.entities.Usuario;
 import com.api.capas.application.service.PedidoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,8 +20,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class PedidoController {
 
-    @Autowired
-    private PedidoService pedidoService;
+    private final PedidoService pedidoService;
+
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
 
     private Integer getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

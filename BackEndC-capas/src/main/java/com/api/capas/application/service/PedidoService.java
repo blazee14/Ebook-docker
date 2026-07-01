@@ -2,7 +2,6 @@ package com.api.capas.application.service;
 
 import com.api.capas.domain.dto.ConfirmarCompraRequestDTO;
 import com.api.capas.domain.dto.PedidoResponseDTO;
-import com.api.capas.infrastructure.persistence.entities.Pedido;
 
 import java.util.List;
 

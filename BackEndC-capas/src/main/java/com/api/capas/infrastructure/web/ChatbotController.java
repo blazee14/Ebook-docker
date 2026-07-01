@@ -2,6 +2,7 @@ package com.api.capas.infrastructure.web;
 
 import com.api.capas.domain.dto.ChatRequest;
 import com.api.capas.infrastructure.ChatbotService;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class ChatbotController {
     }
 
     @PostMapping("/preguntar")
-    public Map<String, String> preguntar(@RequestBody ChatRequest request) {
+    public Map<String, String> preguntar(@NonNull @RequestBody ChatRequest request) {
         // Llama a tu servicio pasándole el objeto ChatRequest completo
         String respuesta = chatbotService.generarRespuesta(request);
         

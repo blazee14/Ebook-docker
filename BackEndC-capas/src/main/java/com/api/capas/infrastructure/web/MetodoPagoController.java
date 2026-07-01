@@ -4,7 +4,6 @@ import com.api.capas.domain.dto.MetodoPagoDTO;
 import com.api.capas.infrastructure.persistence.entities.MetodoPago;
 import com.api.capas.application.service.MetodoPagoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +16,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class MetodoPagoController {
 
-    @Autowired
-    private MetodoPagoService metodoPagoService;
+    private final MetodoPagoService metodoPagoService;
+
+    public MetodoPagoController(MetodoPagoService metodoPagoService) {
+        this.metodoPagoService = metodoPagoService;
+    }
 
     @GetMapping
     public ResponseEntity<List<MetodoPago>> getAllMetodosPago() {

@@ -5,7 +5,6 @@ import com.api.capas.domain.dto.ProductoResponseDTO;
 import com.api.capas.domain.dto.ProductoMasVendidoDTO;
 import com.api.capas.application.service.ProductoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +17,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ProductoController {
 
-	@Autowired
-	private ProductoService productoService;
+	private final ProductoService productoService;
+
+	public ProductoController(ProductoService productoService) {
+		this.productoService = productoService;
+	}
 
 	@GetMapping
 	public ResponseEntity<List<ProductoResponseDTO>> getAllProductos() {

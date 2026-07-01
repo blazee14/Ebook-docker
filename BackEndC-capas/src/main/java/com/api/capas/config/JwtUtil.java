@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(@NonNull UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
         if (userDetails instanceof Usuario) {
@@ -34,14 +35,14 @@ public class JwtUtil {
             claims.put("nombres", usuario.getNombres());
             claims.put("apellidos", usuario.getApellidos());
             claims.put("roles", userDetails.getAuthorities().stream()
-                                            .map(GrantedAuthority::getAuthority)
+                                            .map(authority -> authority.getAuthority())
                                             .collect(Collectors.toList()));
         }
 
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, Objects.requireNonNull(userDetails.getUsername(), "username must not be null"));
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(@NonNull Map<String, Object> claims, @NonNull String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
@@ -51,25 +52,25 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(@NonNull String token, @NonNull UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractUsername(@NonNull String token) {
+        return extractClaim(token, claims -> claims.getSubject());
     }
 
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public Date extractExpiration(@NonNull String token) {
+        return extractClaim(token, claims -> claims.getExpiration());
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(@NonNull String token, @NonNull Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        return claimsResolver.apply(Objects.requireNonNull(claims, "claims must not be null"));
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(@NonNull String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -77,7 +78,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    private Boolean isTokenExpired(@NonNull String token) {
         return extractExpiration(token).before(new Date());
     }
 }

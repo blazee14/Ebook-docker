@@ -4,7 +4,6 @@ import com.api.capas.domain.dto.CategoriaDTO;
 import com.api.capas.infrastructure.persistence.entities.Categoria;
 import com.api.capas.application.service.CategoriaService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +16,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class CategoriaController {
 
-    @Autowired
-    private CategoriaService categoriaService;
+    private final CategoriaService categoriaService;
+
+    public CategoriaController(CategoriaService categoriaService) {
+        this.categoriaService = categoriaService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Categoria>> getAllCategorias() {

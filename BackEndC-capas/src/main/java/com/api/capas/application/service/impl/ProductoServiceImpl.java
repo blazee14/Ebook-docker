@@ -10,25 +10,28 @@ import com.api.capas.infrastructure.persistence.repositories.CategoriaRepository
 import com.api.capas.infrastructure.persistence.repositories.DetallePedidoRepository; // Importar DetallePedidoRepository
 import com.api.capas.infrastructure.persistence.repositories.ProductoRepository;
 import com.api.capas.application.service.ProductoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // <-- ¡IMPORTAR ESTA ANOTACIÓN!
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductoServiceImpl implements ProductoService {
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final DetallePedidoRepository detallePedidoRepository;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    @Autowired
-    private DetallePedidoRepository detallePedidoRepository; // <-- INYECTAR DetallePedidoRepository
+    public ProductoServiceImpl(ProductoRepository productoRepository,
+                               CategoriaRepository categoriaRepository,
+                               DetallePedidoRepository detallePedidoRepository) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.detallePedidoRepository = detallePedidoRepository;
+    }
 
     private ProductoResponseDTO convertToDto(Producto producto) {
         ProductoResponseDTO dto = new ProductoResponseDTO();
@@ -61,8 +64,9 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public ProductoResponseDTO getProductoById(Integer id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+        Integer productoId = Objects.requireNonNull(id, "id must not be null");
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + productoId));
         return convertToDto(producto);
     }
 
@@ -82,10 +86,11 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public List<ProductoResponseDTO> getProductosByCategoria(Integer idCategoria) {
-        if (!categoriaRepository.existsById(idCategoria)) {
-            throw new ResourceNotFoundException("Categoría no encontrada con ID: " + idCategoria);
+        Integer categoriaId = Objects.requireNonNull(idCategoria, "idCategoria must not be null");
+        if (!categoriaRepository.existsById(categoriaId)) {
+            throw new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId);
         }
-        return productoRepository.findByCategoria_Id(idCategoria).stream()
+        return productoRepository.findByCategoria_Id(categoriaId).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -100,15 +105,17 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public ProductoResponseDTO saveProducto(ProductoDTO productoDTO) {
+        Objects.requireNonNull(productoDTO, "productoDTO must not be null");
         Producto producto;
 
         if (productoDTO.getId() != null) {
-            producto = productoRepository.findById(productoDTO.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + productoDTO.getId()));
+            Integer productoId = Objects.requireNonNull(productoDTO.getId(), "id must not be null");
+            producto = productoRepository.findById(productoId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + productoId));
 
             if (!producto.getIsbn().equals(productoDTO.getIsbn())) {
                 Optional<Producto> productoConMismoIsbn = productoRepository.findByIsbn(productoDTO.getIsbn());
-                if (productoConMismoIsbn.isPresent() && !productoConMismoIsbn.get().getId().equals(productoDTO.getId())) {
+                if (productoConMismoIsbn.isPresent() && !productoConMismoIsbn.get().getId().equals(productoId)) {
                     throw new IllegalArgumentException("Ya existe otro producto con el ISBN: " + productoDTO.getIsbn());
                 }
             }
@@ -127,8 +134,9 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setStock(productoDTO.getStock());
         producto.setImagenUrl(productoDTO.getImagenUrl());
 
-        Categoria categoria = categoriaRepository.findById(productoDTO.getIdCategoria())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + productoDTO.getIdCategoria()));
+        Integer categoriaId = Objects.requireNonNull(productoDTO.getIdCategoria(), "idCategoria must not be null");
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId));
         producto.setCategoria(categoria);
 
         Producto savedProducto = productoRepository.save(producto);
@@ -138,20 +146,21 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     @Transactional // <-- ¡AÑADIDA ESTA ANOTACIÓN PARA ASEGURAR ATOMICIDAD EN LA VERIFICACIÓN!
     public void deleteProducto(Integer id) {
+        Integer productoId = Objects.requireNonNull(id, "id must not be null");
         // Primero, verifica si el producto existe
-        Producto producto = productoRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+        Producto producto = productoRepository.findById(productoId)
+            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + productoId));
 
         // --- ¡LÓGICA DE VERIFICACIÓN DE DEPENDENCIAS APLICADA ANTES DE LA ELIMINACIÓN! ---
         // Verifica si hay detalles de pedido asociados a este producto
-        if (detallePedidoRepository.countByProductoId(id) > 0) {
+        if (detallePedidoRepository.countByProductoId(productoId) > 0) {
             // Si hay detalles de pedido, lanzamos una excepción con un mensaje claro
             throw new IllegalArgumentException("No se puede eliminar el libro '" + producto.getTitulo() + "' porque tiene ventas asociadas en pedidos.");
         }
         // --------------------------------------------------------------------------------
 
         // Si no hay ventas asociadas, procede a eliminar el producto
-        productoRepository.deleteById(id);
+        productoRepository.deleteById(productoId);
     }
 
     @Override

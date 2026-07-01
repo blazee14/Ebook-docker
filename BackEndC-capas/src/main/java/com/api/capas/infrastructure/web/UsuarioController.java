@@ -6,7 +6,6 @@ import com.api.capas.domain.dto.LoginResponseDTO;
 import com.api.capas.infrastructure.persistence.entities.Usuario;
 import com.api.capas.application.service.UsuarioService;
 import com.api.capas.config.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,19 +14,24 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    public UsuarioController(UsuarioService usuarioService,
+                             AuthenticationManager authenticationManager,
+                             JwtUtil jwtUtil) {
+        this.usuarioService = usuarioService;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
 
     @PostMapping("/registro")
     public ResponseEntity<Usuario> registrar(@RequestBody RegistroDTO dto) {
@@ -43,7 +47,7 @@ public class UsuarioController {
             );
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwt = jwtUtil.generateToken(userDetails);
+            String jwt = jwtUtil.generateToken(Objects.requireNonNull(userDetails, "userDetails must not be null"));
 
             return ResponseEntity.ok(new LoginResponseDTO(jwt, "Login exitoso", userDetails.getUsername()));
 

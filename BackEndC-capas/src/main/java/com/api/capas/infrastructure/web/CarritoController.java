@@ -4,7 +4,6 @@ import com.api.capas.domain.dto.CarritoValidacionRequestDTO;
 import com.api.capas.domain.dto.CarritoValidacionResponseDTO;
 import com.api.capas.application.service.CarritoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class CarritoController {
 
-    @Autowired
-    private CarritoService carritoService;
+    private final CarritoService carritoService;
+
+    public CarritoController(CarritoService carritoService) {
+        this.carritoService = carritoService;
+    }
 
     @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     @PostMapping("/validar")

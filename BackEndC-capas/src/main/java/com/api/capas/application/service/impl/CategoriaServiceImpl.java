@@ -5,11 +5,11 @@ import com.api.capas.config.ResourceNotFoundException;
 import com.api.capas.infrastructure.persistence.entities.Categoria;
 import com.api.capas.infrastructure.persistence.repositories.CategoriaRepository;
 import com.api.capas.application.service.CategoriaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.api.capas.infrastructure.persistence.repositories.ProductoRepository;
@@ -17,11 +17,13 @@ import com.api.capas.infrastructure.persistence.repositories.ProductoRepository;
 @Service
 public class CategoriaServiceImpl implements CategoriaService {
 
-	@Autowired
-	private CategoriaRepository categoriaRepository;
+	private final CategoriaRepository categoriaRepository;
+	private final ProductoRepository productoRepository;
 
-	@Autowired
-	private ProductoRepository productoRepository;
+	public CategoriaServiceImpl(CategoriaRepository categoriaRepository, ProductoRepository productoRepository) {
+		this.categoriaRepository = categoriaRepository;
+		this.productoRepository = productoRepository;
+	}
 
 	@Override
 	public List<Categoria> getAllCategorias() {
@@ -30,8 +32,9 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 	@Override
 	public Categoria getCategoriaById(Integer id) {
-		return categoriaRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
+		Integer categoriaId = Objects.requireNonNull(id, "id must not be null");
+		return categoriaRepository.findById(categoriaId)
+				.orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId));
 	}
 
 	@Override
@@ -41,17 +44,19 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 	@Override
 	public Categoria saveCategoria(CategoriaDTO categoriaDTO) {
+		Objects.requireNonNull(categoriaDTO, "categoriaDTO must not be null");
 		Categoria categoria;
 
 		if (categoriaDTO.getId() != null) {
-			categoria = categoriaRepository.findById(categoriaDTO.getId()).orElseThrow(
-					() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaDTO.getId()));
+			Integer categoriaId = Objects.requireNonNull(categoriaDTO.getId(), "id must not be null");
+			categoria = categoriaRepository.findById(categoriaId).orElseThrow(
+					() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId));
 
 			if (!categoria.getNombre().equalsIgnoreCase(categoriaDTO.getNombre())) {
 				Optional<Categoria> categoriaConMismoNombre = categoriaRepository
 						.findByNombreIgnoreCase(categoriaDTO.getNombre());
 				if (categoriaConMismoNombre.isPresent()
-						&& !categoriaConMismoNombre.get().getId().equals(categoriaDTO.getId())) {
+						&& !categoriaConMismoNombre.get().getId().equals(categoriaId)) {
 					throw new IllegalArgumentException(
 							"Ya existe otra categoría con el nombre: " + categoriaDTO.getNombre());
 				}
@@ -73,11 +78,12 @@ public class CategoriaServiceImpl implements CategoriaService {
 	@Override
     @Transactional
     public void deleteCategoria(Integer id) {
-		Categoria categoria = categoriaRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
-		if (productoRepository.countByCategoriaId(id) > 0) {
+		Integer categoriaId = Objects.requireNonNull(id, "id must not be null");
+		Categoria categoria = categoriaRepository.findById(categoriaId)
+				.orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId));
+		if (productoRepository.countByCategoriaId(categoriaId) > 0) {
 			throw new IllegalArgumentException("No se puede eliminar la categoría '" + categoria.getNombre() + "' porque tiene libros asociados.");
 			}
-		categoriaRepository.deleteById(id);
+		categoriaRepository.deleteById(categoriaId);
 		}
 }

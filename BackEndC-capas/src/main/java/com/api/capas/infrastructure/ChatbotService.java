@@ -5,6 +5,10 @@ import com.api.capas.infrastructure.persistence.entities.Producto;
 import com.api.capas.infrastructure.persistence.repositories.ProductoRepository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.lang.NonNull;
+
+import java.util.Objects;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -34,7 +38,7 @@ public class ChatbotService {
         this.restTemplate = new RestTemplate(factory);
     }
 
-    public String generarRespuesta(ChatRequest chatRequest) {
+    public String generarRespuesta(@NonNull ChatRequest chatRequest) {
         String userMessage = chatRequest.getMessage();
         try {
             // 1. Extraer los libros directo de tu base de datos real
@@ -69,13 +73,31 @@ public class ChatbotService {
             body.put("messages", messages);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-            ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+            String requestUrl = Objects.requireNonNull(apiUrl, "groq.api.url must not be null");
+            HttpMethod httpMethod = Objects.requireNonNull(HttpMethod.POST, "HTTP method must not be null");
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    requestUrl,
+                    httpMethod,
+                    entity,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
 
             // 5. Retornar la respuesta de la IA
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
-                Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-                return (String) message.get("content");
+            Map<String, Object> responseBody = response.getBody();
+            if (response.getStatusCode() == HttpStatus.OK && responseBody != null) {
+                Object choicesObject = responseBody.get("choices");
+                if (choicesObject instanceof List<?> choicesList && !choicesList.isEmpty()) {
+                    Object firstChoice = choicesList.get(0);
+                    if (firstChoice instanceof Map<?, ?> choiceMap) {
+                        Object messageObject = choiceMap.get("message");
+                        if (messageObject instanceof Map<?, ?> messageMap) {
+                            Object content = messageMap.get("content");
+                            if (content instanceof String contentText) {
+                                return contentText;
+                            }
+                        }
+                    }
+                }
             }
 
             return "Lo siento, en este momento tengo problemas para procesar la lista de libros.";

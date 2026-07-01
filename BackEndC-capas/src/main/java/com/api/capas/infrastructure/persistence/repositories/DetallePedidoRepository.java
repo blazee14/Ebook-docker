@@ -5,12 +5,9 @@ import com.api.capas.infrastructure.persistence.entities.DetallePedido;
 import com.api.capas.infrastructure.persistence.entities.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param; 
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface DetallePedidoRepository extends JpaRepository<DetallePedido, Integer> {
 
     List<DetallePedido> findByPedido(Pedido pedido);
